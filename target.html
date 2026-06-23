@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compliance Report — Methanol</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --primary: #0f4c81;
+      --primary-soft: #e8f1fa;
+      --success: #166534;
+      --warning: #b45309;
+      --danger: #b91c1c;
+      --info: #1d4ed8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+    .report-header {
+      background: linear-gradient(135deg, #0f4c81 0%, #1d6fb8 100%);
+      color: #fff;
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 30px rgba(15, 76, 129, 0.18);
+    }
+    .report-header h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+    }
+    .report-header .meta {
+      opacity: 0.92;
+      font-size: 0.95rem;
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .metric-card, section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .metric-card {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .metric-label {
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .metric-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .metric-value.muted { color: var(--muted); font-size: 1.1rem; }
+    .metric-note { color: var(--muted); font-size: 0.85rem; }
+    section { margin-bottom: 24px; }
+    section h2 {
+      margin: 0 0 16px;
+      font-size: 1.25rem;
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary-soft);
+      padding-bottom: 8px;
+    }
+    .summary-box {
+      background: var(--primary-soft);
+      border-left: 4px solid var(--primary);
+      padding: 16px 18px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    .excerpt { color: var(--muted); font-size: 0.88rem; }
+    .badge, .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .tag { background: #eef2ff; color: #3730a3; }
+    .status-aligned { background: #dcfce7; color: var(--success); }
+    .status-partial { background: #fef3c7; color: var(--warning); }
+    .status-missing, .status-verify, .status-neutral { background: #e5e7eb; color: #374151; }
+    .status-conflict { background: #fee2e2; color: var(--danger); }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .gap-card, .conflict-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      background: #fcfcfd;
+    }
+    .gap-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .severity-high { border-color: #fecaca; }
+    .severity-medium { border-color: #fde68a; }
+    .severity-low { border-color: #d1fae5; }
+    .gap-type, .gap-id { color: var(--muted); font-size: 0.85rem; }
+    .action { margin-top: 10px; }
+    blockquote {
+      margin: 10px 0;
+      padding: 10px 12px;
+      background: #f8fafc;
+      border-left: 3px solid var(--border);
+    }
+    .bullet-list, .numbered-list { margin: 0; padding-left: 20px; }
+    .subtext { color: var(--muted); margin-top: 4px; }
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 24px;
+    }
+    @media print {
+      body { background: #fff; }
+      .container { max-width: none; padding: 0; }
+      .report-header, section, .metric-card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="report-header">
+      <h1>Compliance Report: Methanol</h1>
+      <div class="meta">
+        Report ID: 1ef65aa1-a6dd-401b-abdf-0f7d82e4cbf7 · Workflow ID: 655130dc-b02b-4af5-8a39-dbb1ba9b535b<br />
+        Generated: 2026-06-23T11:23:59.250906
+      </div>
+    </header>
+
+    <div class="metrics">
+      <div class="metric-card"><span class="metric-label">Compliance Score</span><span class="metric-value muted">Not available</span><span class="metric-note">Insufficient detailed evidence</span></div>
+      <div class="metric-card">
+        <span class="metric-label">Compliance Level</span>
+        <span class="metric-value"><span class="badge status-verify">undetermined</span></span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Assessment Confidence</span>
+        <span class="metric-value">low</span>
+      </div>
+    </div>
+
+    <div class="summary-box">
+      <strong>Executive Summary</strong>
+      <p>The available evidence provides a broad overview of regulatory references for methanol, but lacks detailed obligations necessary for a comprehensive compliance assessment. The company&#x27;s document outlines specific safety and handling procedures, but without detailed government requirements, compliance status cannot be fully determined.</p>
+    </div>
+
+    <section><h2>Missing Evidence</h2><ul class="bullet-list"><li>detailed labelling field requirements</li><li>SDS content requirements</li><li>specific disposal procedures</li></ul></section>
+<section><h2>Government Requirements</h2><table><thead><tr><th>ID</th><th>Category</th><th>Depth</th><th>Requirement</th><th>Source Excerpt</th></tr></thead><tbody><tr><td>GR-001</td><td>labeling</td><td><span class='tag'>regulatory_reference</span></td><td>Requirements for labelling of hazardous substances</td><td class='excerpt'>Requirements for labelling of hazardous substances</td></tr><tr><td>GR-002</td><td>documentation</td><td><span class='tag'>regulatory_reference</span></td><td>Requirements for safety data sheets for hazardous substances</td><td class='excerpt'>Requirements for safety data sheets for hazardous substances</td></tr><tr><td>GR-003</td><td>other</td><td><span class='tag'>detailed_obligation</span></td><td>No person may use this substance described as a pesticide or a veterinary medicine.</td><td class='excerpt'>No person may use this substance described as a pesticide or a veterinary medicine.</td></tr></tbody></table></section>
+<section><h2>Requirement Alignments</h2><table><thead><tr><th>Gov ID</th><th>Company ID</th><th>Status</th><th>Evidence</th><th>Gap</th><th>Recommended Action</th></tr></thead><tbody><tr><td>GR-003</td><td>CP-001</td><td><span class='badge status-aligned'>aligned</span></td><td>Both sources restrict certain uses of methanol, aligning on the prohibition of specific applications.</td><td></td><td></td></tr></tbody></table></section>
+<section><h2>Coverage Gaps</h2><div class="card-grid"><article class="gap-card severity-medium"><div class="gap-header"><span class="badge severity-medium">MEDIUM</span><span class="gap-type">cannot_verify</span><span class="gap-id">GR-001</span></div><p>The company document does not provide specific labelling information, and the government source only provides a regulatory reference.</p><p class="action"><strong>Action:</strong> Obtain full notice text for labelling requirements.</p></article><article class="gap-card severity-medium"><div class="gap-header"><span class="badge severity-medium">MEDIUM</span><span class="gap-type">cannot_verify</span><span class="gap-id">GR-002</span></div><p>The company document does not mention SDS content, and the government source only provides a regulatory reference.</p><p class="action"><strong>Action:</strong> Obtain full notice text for SDS requirements.</p></article></div></section>
+<section><h2>Recommendations</h2><ol class='numbered-list'><li><strong>#1</strong> Obtain full text of Labelling Notice 2017 for detailed comparison<div class='subtext'>To verify compliance with labelling requirements, detailed government text is necessary.</div></li></ol></section>
+<section><h2>Limitations</h2><ul class="bullet-list"><li>Data quality and coverage limitations</li></ul></section>
+
+    <div class="footer">
+      Generated by PDF Compare Compliance Engine
+    </div>
+  </div>
+</body>
+</html>

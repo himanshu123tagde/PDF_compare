@@ -1,0 +1,27 @@
+# Web API
+fastapi
+python-multipart
+uvicorn[standard]
+
+# HTTP & config
+httpx
+python-dotenv
+pydantic
+
+# Database
+pymongo
+
+# HTML scraping & extraction
+trafilatura
+beautifulsoup4
+lxml
+lxml_html_clean
+readability-lxml
+newspaper4k
+playwright
+
+# Document parsing (company uploads & URL documents)
+PyPDF2
+python-docx
+openpyxl
+python-pptx
