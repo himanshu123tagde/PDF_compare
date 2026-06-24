@@ -8,6 +8,10 @@ load_dotenv()
 class Settings(BaseModel):
     APP_NAME: str = os.getenv("APP_NAME", "Scraper Service")
     APP_ENV: str = os.getenv("APP_ENV", "development")
+    CORS_ORIGINS: str = os.getenv(
+        "CORS_ORIGINS",
+        "http://localhost:3800,http://127.0.0.1:3800,http://156.67.105.146:3800",
+    )
     REQUEST_TIMEOUT: int = int(os.getenv("REQUEST_TIMEOUT", "30"))
     USER_AGENT: str = os.getenv(
         "USER_AGENT",
