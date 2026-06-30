@@ -291,12 +291,16 @@ def render_fixed_document_html(
       font-size: 9pt;
       font-family: "Segoe UI", Arial, sans-serif;
     }}
+    @page {{
+      margin: 12px;
+    }}
     @media print {{
       body {{ background: #fff; }}
       .document {{
         max-width: none;
         margin: 0;
-        padding: 0;
+        padding: 12px;
+        box-sizing: border-box;
       }}
     }}
   </style>

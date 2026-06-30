@@ -1,6 +1,6 @@
 import logging
 
-from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi import APIRouter, File, HTTPException, Query, UploadFile
 from fastapi.responses import HTMLResponse
 
 from app.models.schemas import (
@@ -55,9 +55,12 @@ async def create_workflow(payload: CreateWorkflowRequest):
 
 
 @router.get("", response_model=WorkflowListResponse)
-def list_workflows():
-    items = workflow_service.list_workflows()
-    return {"items": items, "total": len(items)}
+def list_workflows(
+    limit: int = Query(20, ge=1, le=100, description="Maximum number of workflows to return"),
+    offset: int = Query(0, ge=0, description="Number of workflows to skip"),
+):
+    items, total = workflow_service.list_workflows(limit=limit, offset=offset)
+    return {"items": items, "total": total, "limit": limit, "offset": offset}
 
 
 @router.get("/{workflow_id}", response_model=WorkflowResponse)

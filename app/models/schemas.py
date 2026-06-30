@@ -107,6 +107,8 @@ class WorkflowResponse(BaseModel):
 class WorkflowListResponse(BaseModel):
     items: List[WorkflowResponse]
     total: int
+    limit: int
+    offset: int
 
 
 class WorkflowGovDataResponse(BaseModel):
