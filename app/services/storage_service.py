@@ -110,6 +110,33 @@ class StorageService:
         )
         return f"mongo://{get_uploads_bucket_name()}/{file_id}"
 
+    def save_company_image(
+        self,
+        document_id: str,
+        image_id: str,
+        content_type: str,
+        file_bytes: bytes,
+    ) -> str:
+        file_id = self._gridfs.put(
+            file_bytes,
+            filename=f"{document_id}_{image_id}",
+            metadata={
+                "document_id": document_id,
+                "image_id": image_id,
+                "content_type": content_type,
+                "kind": "company_image",
+            },
+        )
+        return str(file_id)
+
+    def load_company_image(self, gridfs_id: str) -> bytes | None:
+        try:
+            from bson import ObjectId
+
+            return self._gridfs.get(ObjectId(gridfs_id)).read()
+        except Exception:
+            return None
+
     def save_comparison(self, comparison_id: str, data: dict) -> None:
         self._upsert(self.ENTITY_COMPARISON, comparison_id, data)
 

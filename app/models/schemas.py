@@ -148,6 +148,7 @@ class ReportResponse(BaseModel):
     compliance_level: str
     missing_evidence: List[str] = []
     structured_result: Dict[str, Any]
+    html_type: str = "fixed_document"
     html: str
     html_path: str
     created_at: str

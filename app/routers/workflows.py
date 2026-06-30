@@ -168,6 +168,13 @@ def get_report(workflow_id: str):
 
     report_id = workflow.get("report_id")
     if not report_id:
+        if workflow.get("status") == "comparing":
+            comparison = comparison_service.get_workflow_comparison(workflow_id)
+            if comparison and comparison.get("structured_result"):
+                raise HTTPException(
+                    status_code=202,
+                    detail="Report is still being generated. Poll again shortly.",
+                )
         raise HTTPException(
             status_code=404,
             detail="Report not available yet. Run comparison and wait for completion.",
@@ -187,6 +194,13 @@ def get_report_html(workflow_id: str):
 
     report_id = workflow.get("report_id")
     if not report_id:
+        if workflow.get("status") == "comparing":
+            comparison = comparison_service.get_workflow_comparison(workflow_id)
+            if comparison and comparison.get("structured_result"):
+                raise HTTPException(
+                    status_code=202,
+                    detail="Report HTML is still being generated. Poll again shortly.",
+                )
         raise HTTPException(
             status_code=404,
             detail="Report not available yet. Run comparison and wait for completion.",
@@ -196,5 +210,10 @@ def get_report_html(workflow_id: str):
     if not report:
         raise HTTPException(status_code=404, detail="Report not found.")
 
-    html = report_service.get_report_html(report, workflow)
+    company_doc = None
+    document_id = workflow.get("company_document_id")
+    if document_id:
+        company_doc = document_upload_service.get_company_document(document_id)
+
+    html = report_service.get_report_html(report, workflow, company_doc=company_doc)
     return HTMLResponse(content=html)
