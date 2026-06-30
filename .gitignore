@@ -153,5 +153,5 @@ cython_debug/
 # VS Code
 .vscode/
 
-# Project specific — local data folder (persistence is in MongoDB)
-data/
+# Project specific — local runtime data at repo root (persistence is in MongoDB)
+/data/
