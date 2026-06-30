@@ -107,6 +107,8 @@ class WorkflowResponse(BaseModel):
 class WorkflowListResponse(BaseModel):
     items: List[WorkflowResponse]
     total: int
+    limit: int
+    offset: int
 
 
 class WorkflowGovDataResponse(BaseModel):
@@ -148,6 +150,7 @@ class ReportResponse(BaseModel):
     compliance_level: str
     missing_evidence: List[str] = []
     structured_result: Dict[str, Any]
+    html_type: str = "fixed_document"
     html: str
     html_path: str
     created_at: str

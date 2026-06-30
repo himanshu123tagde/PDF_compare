@@ -16,7 +16,11 @@ from app.services.newspaper_extractor import extract_with_newspaper
 from app.services.playwright_fetcher import fetch_with_playwright
 from app.services.document_extractor import is_document_url, download_and_extract_document
 from app.services.scrape_limiter import scrape_semaphore
-from app.services.epa_nz_extractor import is_epa_ahsc_view_page, extract_epa_ahsc_record
+from app.services.epa_nz_extractor import (
+    extract_epa_structured_metadata,
+    is_epa_ahsc_view_page,
+    extract_epa_ahsc_record,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -187,6 +191,7 @@ class ScraperService:
         if is_epa_ahsc_view_page(url):
             epa_title, epa_text = extract_epa_ahsc_record(html)
             if self._is_good_extraction(epa_text):
+                metadata = extract_epa_structured_metadata(html, epa_text)
                 return epa_title, epa_text, "epa_ahsc", metadata
 
         title, text = self.extract_with_trafilatura(html, url)

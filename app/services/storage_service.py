@@ -43,9 +43,22 @@ class StorageService:
             self._collection.find_one({"entity_type": entity_type, "id": entity_id})
         )
 
-    def _find_many(self, entity_type: str) -> list[dict]:
+    def _find_many(
+        self,
+        entity_type: str,
+        *,
+        limit: int | None = None,
+        offset: int = 0,
+    ) -> list[dict]:
         cursor = self._collection.find({"entity_type": entity_type}).sort("created_at", -1)
+        if offset:
+            cursor = cursor.skip(offset)
+        if limit is not None:
+            cursor = cursor.limit(limit)
         return [_clean_document(doc) for doc in cursor if doc]
+
+    def _count_many(self, entity_type: str) -> int:
+        return self._collection.count_documents({"entity_type": entity_type})
 
     def _mongo_ref(self, entity_type: str, entity_id: str, field: str = "") -> str:
         suffix = f"/{field}" if field else ""
@@ -89,8 +102,15 @@ class StorageService:
     def load_workflow(self, workflow_id: str) -> Optional[dict]:
         return self._find_one(self.ENTITY_WORKFLOW, workflow_id)
 
-    def list_workflows(self) -> list[dict]:
-        return self._find_many(self.ENTITY_WORKFLOW)
+    def list_workflows(
+        self,
+        *,
+        limit: int | None = None,
+        offset: int = 0,
+    ) -> tuple[list[dict], int]:
+        total = self._count_many(self.ENTITY_WORKFLOW)
+        items = self._find_many(self.ENTITY_WORKFLOW, limit=limit, offset=offset)
+        return items, total
 
     def save_company_document(self, document_id: str, data: dict) -> None:
         self._upsert(self.ENTITY_COMPANY_DOCUMENT, document_id, data)
@@ -109,6 +129,33 @@ class StorageService:
             metadata={"document_id": document_id, "extension": extension},
         )
         return f"mongo://{get_uploads_bucket_name()}/{file_id}"
+
+    def save_company_image(
+        self,
+        document_id: str,
+        image_id: str,
+        content_type: str,
+        file_bytes: bytes,
+    ) -> str:
+        file_id = self._gridfs.put(
+            file_bytes,
+            filename=f"{document_id}_{image_id}",
+            metadata={
+                "document_id": document_id,
+                "image_id": image_id,
+                "content_type": content_type,
+                "kind": "company_image",
+            },
+        )
+        return str(file_id)
+
+    def load_company_image(self, gridfs_id: str) -> bytes | None:
+        try:
+            from bson import ObjectId
+
+            return self._gridfs.get(ObjectId(gridfs_id)).read()
+        except Exception:
+            return None
 
     def save_comparison(self, comparison_id: str, data: dict) -> None:
         self._upsert(self.ENTITY_COMPARISON, comparison_id, data)

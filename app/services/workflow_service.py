@@ -57,9 +57,15 @@ class WorkflowService:
         logger.info("Created workflow %s for product '%s'", workflow_id, product_name)
         return workflow
 
-    def list_workflows(self) -> list[dict]:
-        workflows = self.storage.list_workflows()
-        return [self._sync_scrape_status(workflow) for workflow in workflows]
+    def list_workflows(
+        self,
+        *,
+        limit: int | None = None,
+        offset: int = 0,
+    ) -> tuple[list[dict], int]:
+        workflows, total = self.storage.list_workflows(limit=limit, offset=offset)
+        items = [self._sync_scrape_status(workflow) for workflow in workflows]
+        return items, total
 
     def get_workflow(self, workflow_id: str) -> dict | None:
         workflow = self.storage.load_workflow(workflow_id)

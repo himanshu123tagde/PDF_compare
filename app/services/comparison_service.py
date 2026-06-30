@@ -151,15 +151,22 @@ class ComparisonService:
 
                 await self._update_comparison(
                     comparison_id,
-                    status="completed",
+                    status="running",
                     raw_ai_response=raw_response,
                     structured_result=structured,
                     token_usage=token_usage,
-                    completed_at=utcnow_iso(),
                 )
 
                 comparison = self.storage.load_comparison(comparison_id)
-                report = self.report_service.generate_report(workflow, comparison)
+                report = await self.report_service.generate_report(
+                    workflow, comparison, company_doc
+                )
+
+                await self._update_comparison(
+                    comparison_id,
+                    status="completed",
+                    completed_at=utcnow_iso(),
+                )
 
                 self._set_workflow_status(
                     workflow_id,
@@ -239,6 +246,7 @@ class ComparisonService:
                 "url": article["url"],
                 "title": article.get("extracted_title"),
                 "text": text,
+                "metadata": article.get("metadata") or {},
             })
         return sources
 
